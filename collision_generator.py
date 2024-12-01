@@ -5,13 +5,13 @@ import pyperclip
 
 def parse_smp_toolbox_data(data):
     lines = data.strip().split('\n')
-    collisions = []
+    collisions_dict = {}
 
     for line in lines:
         parts = line.split('|')
         variable_name = parts[3]
         width = min((float(parts[9].replace(',', '.')) / 16), (float(parts[11].replace(',', '.')) / 16))
-        height = float(parts[8].replace(',', '.')) / 16
+        height = float(parts[10].replace(',', '.')) / 16
         pos_x = float(parts[6].replace(',', '.')) / 16
         pos_y = -float(parts[7].replace(',', '.')) / 16
         pos_z = float(parts[8].replace(',', '.')) / 16
@@ -23,13 +23,16 @@ def parse_smp_toolbox_data(data):
             "variableName": variable_name,
             "variableType": "toggle"
         }
-        collisions.append(collision)
 
-    return {
-        "isInterior": True,
-        "collisions": collisions,
-        "animations": []
-    }
+        if variable_name not in collisions_dict:
+            collisions_dict[variable_name] = {
+                "isInterior": True,
+                "collisions": [],
+                "animations": []
+            }
+        collisions_dict[variable_name]["collisions"].append(collision)
+
+    return list(collisions_dict.values())
 
 def generate_json():
     data = text_entry.get("1.0", tk.END)
