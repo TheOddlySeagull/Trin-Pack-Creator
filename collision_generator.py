@@ -3,7 +3,7 @@ from tkinter import messagebox
 import json
 import pyperclip
 
-def parse_smp_toolbox_data(data):
+def parse_smp_toolbox_data_hitbox(data):
     lines = data.strip().split('\n')
     collisions_dict = {}
 
@@ -34,10 +34,52 @@ def parse_smp_toolbox_data(data):
 
     return list(collisions_dict.values())
 
-def generate_json():
+def parse_smp_toolbox_data_part(data):
+    lines = data.strip().split('\n')
+    parts = []
+
+    for line in lines:
+        parts_data = line.split('|')
+        variable_name = parts_data[3]
+        width = float(parts_data[9].replace(',', '.')) / 16
+        height = float(parts_data[10].replace(',', '.')) / 16
+        depth = float(parts_data[11].replace(',', '.')) / 16
+        pos_x = float(parts_data[6].replace(',', '.')) / 16
+        pos_y = -float(parts_data[7].replace(',', '.')) / 16
+        pos_z = float(parts_data[8].replace(',', '.')) / 16
+
+        # Extract and process rotation
+        rot_x = -float(parts_data[12].replace(',', '.'))
+        rot_y = -float(parts_data[13].replace(',', '.'))
+        rot_z = float(parts_data[14].replace(',', '.'))
+
+        max_value = max(width, height, depth)
+        types = [name.strip() for name in variable_name.split(',')]
+
+        part = {
+            "pos": [pos_z, pos_y, pos_x],
+            "rot": [rot_x, rot_y, rot_z],
+            "maxValue": max_value,
+            "types": types
+        }
+        parts.append(part)
+
+    return parts
+
+def generate_hitbox_json():
     data = text_entry.get("1.0", tk.END)
     try:
-        json_data = parse_smp_toolbox_data(data)
+        json_data = parse_smp_toolbox_data_hitbox(data)
+        json_str = json.dumps(json_data, indent=4)
+        output_text.delete("1.0", tk.END)
+        output_text.insert(tk.END, json_str)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+def generate_part_json():
+    data = text_entry.get("1.0", tk.END)
+    try:
+        json_data = parse_smp_toolbox_data_part(data)
         json_str = json.dumps(json_data, indent=4)
         output_text.delete("1.0", tk.END)
         output_text.insert(tk.END, json_str)
@@ -58,8 +100,11 @@ tk.Label(root, text="Paste SMP Toolbox data:").pack()
 text_entry = tk.Text(root, height=10, width=80)
 text_entry.pack()
 
-generate_button = tk.Button(root, text="Generate JSON", command=generate_json)
-generate_button.pack()
+generate_hitbox_button = tk.Button(root, text="Generate Hitbox JSON", command=generate_hitbox_json)
+generate_hitbox_button.pack()
+
+generate_part_button = tk.Button(root, text="Generate Part JSON", command=generate_part_json)
+generate_part_button.pack()
 
 output_text = tk.Text(root, height=10, width=80)
 output_text.pack()

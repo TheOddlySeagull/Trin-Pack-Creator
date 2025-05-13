@@ -32,28 +32,21 @@ def add_damaged_animation(json_file):
                     center_point = anim.get("centerPoint", None)
                     print(f"center point: {center_point}")
 
-                    # Now, in animations, we need to add a new animation for the total damage
-                    '''
-                    expected:
+                    # Ensure x, y, and z are actual values and not null or undefined
+                    if center_point and all(coord is not None for coord in center_point.values()):
+                        # Create a new animation
+                        new_anim = {
+                            "animationType": "rotation",
+                            "variable": "damage_totaled",
+                            "centerPoint": center_point,
+                            "axis": [random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-10, 10)]
+                        }
+                        print(f"new animation: {new_anim}")
 
-                    {
-                        "animationType": "rotation",
-                        "variable": "damage_totaled",
-                        "centerPoint": {centerPoint},
-                        "axis": [x, y, z]
-                    }
-                    '''
-                    # Create a new animation
-                    new_anim = {
-                        "animationType": "rotation",
-                        "variable": "damage_totaled",
-                        "centerPoint": center_point,
-                        "axis": [random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-10, 10)]
-                    }
-                    print(f"new animation: {new_anim}")
-
-                    # Add the new animation to the object
-                    obj["animations"].append(new_anim)
+                        # Add the new animation to the object
+                        obj["animations"].append(new_anim)
+                    else:
+                        print("Skipping damaged animation due to invalid centerPoint or coordinates")
         else:
             print("damage_totaled animation already exists")
             # for all the animation, if of type "damage_totaled", but "centerPoint": null, then delete the animation
