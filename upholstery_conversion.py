@@ -89,8 +89,8 @@ def batch_process_folder(folder_path, output_folder=None):
 
 # === Usage Example ===
 if __name__ == "__main__":
-    input_folder = "E:/Documents Global/Programmation/Trin/NOT TRIN/immersive_vehicles_vanity/mccore/src/main/resources/assets/iv_tcp_v3_civil/textures/vehicles"
-    output_folder = "E:/Documents Global/Programmation/Trin/NOT TRIN/immersive_vehicles_vanity/mccore/src/main/resources/assets/iv_tcp_v3_civil/textures/vehicles"
+    input_folder = "E:/Documents Global/Programmation/Trin/NOT TRIN/immersive_vehicles_vanity/mccore/src/main/resources/assets/ivv/jsondefs_base_ivlabs/jsondefs/skins/trin"
+    output_folder = "E:/Documents Global/Programmation/Trin/NOT TRIN/immersive_vehicles_vanity/mccore/src/main/resources/assets/ivv/jsondefs_base_ivlabs/jsondefs/skins/trin"
 
     os.makedirs(output_folder, exist_ok=True)
     batch_process_folder(input_folder, output_folder)
