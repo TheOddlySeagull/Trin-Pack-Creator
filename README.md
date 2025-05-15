@@ -32,10 +32,17 @@ Generates grayscale variants of vehicle skins to support shaders, enabling specu
 - Cleans up orphaned specular maps.
 
 #### Usage
-Run the script with the `--base-path` argument to specify the base path for assets.
+Run the script with the following optional arguments:
+
+- `--base-path`: Specify the base path for assets (required).
+- `--noise-tolerance`: Set the tolerance for noise in color matching (default: 0).
+- `--override-existing`: Override existing specular maps.
+- `--use-multithreading`: Enable multithreading for faster processing.
+
+Example:
 
 ```sh
-python generate_specular_maps.py --base-path path/to/your/assets
+python generate_specular_maps.py --base-path path/to/your/assets --noise-tolerance 5 --override-existing --use-multithreading
 ```
 
 ---

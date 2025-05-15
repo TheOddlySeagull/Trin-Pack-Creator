@@ -120,6 +120,9 @@ def cleanup_orphans(valid_sources):
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Generate specular maps for images.")
     parser.add_argument("--base-path", type=str, required=True, help="Base path for assets.")
+    parser.add_argument("--noise-tolerance", type=int, default=0, help="Tolerance for noise in color matching (default: 0).")
+    parser.add_argument("--override-existing", action="store_true", help="Override existing specular maps.")
+    parser.add_argument("--use-multithreading", action="store_true", help="Enable multithreading for faster processing.")
     return parser.parse_args()
 
 # === Main ===
@@ -146,17 +149,20 @@ def process_images(images_to_process):
         with ThreadPoolExecutor() as executor:
             futures = [executor.submit(process_image, img_path) for img_path in images_to_process]
             for _ in as_completed(futures):
-                pass
+                print(f"Completed processing: {futures[_].result()}")
     else:
         for img_path in images_to_process:
             process_image(img_path)
 
 def main():
     args = parse_arguments()
-    global BASE_PATH, EXCLUDE_PATH
+    global BASE_PATH, EXCLUDE_PATH, NOISE_TOLERANCE, OVERRIDE_EXISTING, USE_MULTITHREADING
     BASE_PATH = os.path.abspath(args.base_path)
     EXCLUDE_PATH = os.path.join(BASE_PATH, "mccore", "build")
-    
+    NOISE_TOLERANCE = args.noise_tolerance
+    OVERRIDE_EXISTING = args.override_existing
+    USE_MULTITHREADING = args.use_multithreading
+
     found_sources, images_to_process = collect_images_to_process()
     process_images(images_to_process)
     cleanup_orphans(found_sources)
