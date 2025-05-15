@@ -1,9 +1,11 @@
 import os
 import pathlib
+import argparse
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # === Configuration ===
+SPECULAR_SUFFIX = "_s.png"
 COLOR_MAP = {
     "#99CCCC": "#FFFFFF",
     "#B8B7B5": "#999999",
@@ -51,8 +53,8 @@ USE_MULTITHREADING = False  # Set to True to enable multithreading
 BLACKLIST = {"vignette.png"}  # Add filenames to blacklist
 
 # === Paths ===
-BASE_PATH = os.path.abspath("E:/Documents Global/Programmation/Trin/Trin Civil Pack V3 V4")
-EXCLUDE_PATH = os.path.join(BASE_PATH, "mccore", "build")
+BASE_PATH = None
+EXCLUDE_PATH = None
 
 # === Helper Functions ===
 def hex_to_rgb(hex_color):
@@ -87,7 +89,7 @@ def map_pixel_color(pixel_rgb):
     return hex_to_rgb(DEFAULT_COLOR)
 
 def process_image(image_path):
-    specular_name = os.path.splitext(image_path)[0] + "_s.png"
+    specular_name = os.path.splitext(image_path)[0] + SPECULAR_SUFFIX
     if not OVERRIDE_EXISTING and os.path.exists(specular_name):
         return
     try:
@@ -108,15 +110,20 @@ def process_image(image_path):
 def cleanup_orphans(valid_sources):
     for dirpath, _, filenames in os.walk(BASE_PATH):
         for file in filenames:
-            if file.endswith("_s.png"):
+            if file.endswith(SPECULAR_SUFFIX):
                 specular_path = os.path.join(dirpath, file)
                 source_path = specular_path[:-6] + ".png"
                 if os.path.normpath(source_path) not in valid_sources:
                     os.remove(specular_path)
                     print(f"Removed orphaned specular map: {os.path.relpath(specular_path, BASE_PATH)}")
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Generate specular maps for images.")
+    parser.add_argument("--base-path", type=str, required=True, help="Base path for assets.")
+    return parser.parse_args()
+
 # === Main ===
-def main():
+def collect_images_to_process():
     found_sources = set()
     images_to_process = []
 
@@ -125,13 +132,16 @@ def main():
             continue
 
         for file in filenames:
-            if file.lower().endswith(".png") and not file.lower().endswith("_s.png"):
+            if file.lower().endswith(".png") and not file.lower().endswith(SPECULAR_SUFFIX):
                 full_path = os.path.join(dirpath, file)
                 if not is_valid_image_path(full_path):
                     continue
                 found_sources.add(os.path.normpath(full_path))
                 images_to_process.append(full_path)
 
+    return found_sources, images_to_process
+
+def process_images(images_to_process):
     if USE_MULTITHREADING:
         with ThreadPoolExecutor() as executor:
             futures = [executor.submit(process_image, img_path) for img_path in images_to_process]
@@ -141,6 +151,14 @@ def main():
         for img_path in images_to_process:
             process_image(img_path)
 
+def main():
+    args = parse_arguments()
+    global BASE_PATH, EXCLUDE_PATH
+    BASE_PATH = os.path.abspath(args.base_path)
+    EXCLUDE_PATH = os.path.join(BASE_PATH, "mccore", "build")
+    
+    found_sources, images_to_process = collect_images_to_process()
+    process_images(images_to_process)
     cleanup_orphans(found_sources)
 
 if __name__ == "__main__":

@@ -32,7 +32,11 @@ Generates grayscale variants of vehicle skins to support shaders, enabling specu
 - Cleans up orphaned specular maps.
 
 #### Usage
-Run the script directly to process images in the specified base path.
+Run the script with the `--base-path` argument to specify the base path for assets.
+
+```sh
+python generate_specular_maps.py --base-path path/to/your/assets
+```
 
 ---
 
