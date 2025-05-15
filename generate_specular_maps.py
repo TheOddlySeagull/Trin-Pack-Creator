@@ -1,6 +1,7 @@
 import os
 import pathlib
 import argparse
+import time
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -145,14 +146,21 @@ def collect_images_to_process():
     return found_sources, images_to_process
 
 def process_images(images_to_process):
+    start_time = time.time()
     if USE_MULTITHREADING:
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(process_image, img_path) for img_path in images_to_process]
-            for _ in as_completed(futures):
-                print(f"Completed processing: {futures[_].result()}")
+            future_to_image = {executor.submit(process_image, img_path): img_path for img_path in images_to_process}
+            for future in as_completed(future_to_image):
+                img_path = future_to_image[future]
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Error processing {img_path}: {e}")
     else:
         for img_path in images_to_process:
             process_image(img_path)
+    end_time = time.time()
+    print(f"Processing completed in {end_time - start_time:.2f} seconds.")
 
 def main():
     args = parse_arguments()
