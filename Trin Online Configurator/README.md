@@ -5,7 +5,7 @@ The `Trin Online Configurator` folder contains tools designed to assist with cre
 ## Tools Overview
 
 ### 1. `generate_texture_banner.py`
-Generates credit banners for vehicle textures, including overlays and fixed color panels. This is useful for creating visually appealing credits with your name, date, and model name.
+Generates credit banners for vehicle textures, including overlays and fixed color panels. This is useful for creating visually appealing credits with your name, model name, along with creation date.
 
 #### Features
 - Adds banners with trim names, creator names, and dates.
@@ -17,7 +17,8 @@ Run the script and provide the required image paths and details (e.g., trim name
 ---
 
 ### 2. `layer_generator.py`
-Processes vehicle texture images to generate individual layers for different parts of the vehicle, such as paint, interior, and accents. Supports predefined color mappings for layer extraction.
+Processes vehicle texture images to generate individual layers for different parts of the vehicle, such as paint, interior, and accents. Supports predefined color mappings for layer extraction.  
+This will simply generate the layers for your vehicle to be usable on the online configurator.
 
 #### Features
 - Extracts layers based on predefined color mappings.
