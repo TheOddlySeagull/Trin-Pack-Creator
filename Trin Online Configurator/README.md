@@ -5,7 +5,7 @@ The `Trin Online Configurator` folder contains tools designed to assist with cre
 ## Tools Overview
 
 ### 1. `generate_texture_banner.py`
-Generates banners for vehicle textures, including overlays and fixed color panels. This is useful for creating visually appealing showcases for vehicle designs.
+Generates credit banners for vehicle textures, including overlays and fixed color panels. This is useful for creating visually appealing credits with your name, date, and model name.
 
 #### Features
 - Adds banners with trim names, creator names, and dates.
