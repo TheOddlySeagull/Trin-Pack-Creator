@@ -49,9 +49,9 @@ def parse_smp_toolbox_data_part(data):
         pos_z = float(parts_data[8].replace(',', '.')) / 16
 
         # Extract and process rotation
-        rot_x = -float(parts_data[12].replace(',', '.'))
-        rot_y = -float(parts_data[13].replace(',', '.'))
-        rot_z = float(parts_data[14].replace(',', '.'))
+        rot_x = -float(parts_data[14].replace(',', '.'))
+        rot_y = float(parts_data[13].replace(',', '.')) 
+        rot_z = float(parts_data[12].replace(',', '.')) 
 
         max_value = max(width, height, depth)
         types = [name.strip() for name in variable_name.split(',')]
