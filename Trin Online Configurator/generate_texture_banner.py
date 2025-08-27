@@ -10,9 +10,9 @@ PADDING = 4
 FONT_SIZE = 16
 
 # File paths
-DARK_TEXTURE_PATH = "backgrounds/metal_dark.png"
-LIGHT_TEXTURE_PATH = "backgrounds/metal_light.png"
-FONT_PATH = "EXEPixelPerfect.ttf"
+DARK_TEXTURE_PATH = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Trin Online Configurator/backgrounds/metal_dark.png"
+LIGHT_TEXTURE_PATH = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Trin Online Configurator/backgrounds/metal_light.png"
+FONT_PATH = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Trin Online Configurator/EXEPixelPerfect.ttf"
 
 CREATOR_NAME = "TheOddlySeagull"
 
@@ -109,10 +109,10 @@ def draw_banner_overlay(base_img, trim_name, car_name, banner_date=None):
 
 # === Example usage ===
 if __name__ == "__main__":
-    trim = "Special Six"
-    car = "Trin Footpather"
-    img_path = "reference/Trin_Footpather_p3.png"
-    out_path = "reference/Trin_Footpather_p3.png"
+    trim = "Military Spec"
+    car = "Trin ATTG210"
+    img_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-attg210_BASE.png"
+    out_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-attg210_BASE.png"
 
     img = Image.open(img_path).convert("RGBA")
     final = draw_banner_overlay(img, trim, car)
