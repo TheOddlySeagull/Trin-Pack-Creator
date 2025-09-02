@@ -26,9 +26,16 @@ def parse_smp_toolbox_data_hitbox(data):
 
         if variable_name not in collisions_dict:
             collisions_dict[variable_name] = {
-                "isInterior": True,
+                "collisionTypes": [
+                    "block",
+                    "entity",
+                    "vehicle",
+                    "attack",
+                    "bullet",
+                    "click"
+                ],
                 "collisions": [],
-                "animations": []
+                "applyAfter": variable_name
             }
         collisions_dict[variable_name]["collisions"].append(collision)
 
@@ -66,6 +73,102 @@ def parse_smp_toolbox_data_part(data):
 
     return parts
 
+def parse_smp_toolbox_data_animation(data):
+    lines = data.strip().split('\n')
+    animations = []
+
+    # Configuration for special cases
+    config = {
+        "pedal_accel": {"variable": "throttle", "axis": [-20.0, 0.0, 0.0]},
+        "gas": {"variable": "throttle", "axis": [-20.0, 0.0, 0.0]},
+        "steer": {"variable": "rudder", "axis": [0.0, 0.0, 1.0]},
+        "pedal_brake": {"variable": "brake", "axis": [-20.0, 0.0, 0.0]},
+        "brake": {"variable": "brake", "axis": [-20.0, 0.0, 0.0]},
+        "p_brake": {"variable": "p_brake", "axis": [-30.0, 0.0, 0.0]},
+        "shifter": {"variable": "engine_gearshift_1", "axis": [1.0, 0.0, 0.0]},
+        "shift": {"variable": "engine_gearshift_1", "axis": [1.0, 0.0, 0.0]},
+        "door_boot": {"variable": "door_boot", "axis": [-90.0, 0.0, 0.0], "duration": 15, "forwardsEasing": "easeoutquint", "reverseEasing": "easeincubic", "forwardsStartSound": "iv_tpp:bootopen", "reverseEndSound": "iv_tpp:bootclose"},
+        "tailgate": {"variable": "door_boot", "axis": [0.0, 90.0, 0.0], "duration": 15, "forwardsEasing": "easeoutquint", "reverseEasing": "easeincubic", "forwardsStartSound": "iv_tpp:bootopen", "reverseEndSound": "iv_tpp:bootclose"},
+        "door_hood": {"variable": "door_hood", "axis": [-90.0, 0.0, 0.0], "duration": 25, "forwardsEasing": "easeoutquint", "reverseEasing": "easeincubic", "forwardsStartSound": "iv_tpp:hoodopen", "reverseStartSound": "iv_tpp:hoodclose"},
+        "pedal_clutch": {"variable": "clutch", "axis": [-30.0, 0.0, 0.0], "extra": {"animationType": "visibility", "variable": "engine_isautomatic_1"}},
+        "clutch": {"variable": "clutch", "axis": [-30.0, 0.0, 0.0], "extra": {"animationType": "visibility", "variable": "engine_isautomatic_1"}},
+    }
+
+    for line in lines:
+        parts = line.split('|')
+        object_name = parts[3]
+        pos_x = float(parts[6].replace(',', '.')) / 16
+        pos_y = -float(parts[7].replace(',', '.')) / 16
+        pos_z = float(parts[8].replace(',', '.')) / 16
+
+        center_point = [pos_z, pos_y, pos_x]
+        animation = {"objectName": object_name, "animations": []}
+
+        # Handle special cases
+        handled = False
+        for key, value in config.items():
+            if key in object_name:
+                anim = {
+                    "animationType": "rotation",
+                    "variable": value["variable"],
+                    "centerPoint": center_point,
+                    "axis": value["axis"]
+                }
+                if "duration" in value:
+                    anim.update({
+                        "duration": value["duration"],
+                        "forwardsEasing": value["forwardsEasing"],
+                        "reverseEasing": value["reverseEasing"],
+                        "forwardsStartSound": value["forwardsStartSound"]
+                    })
+                    if "reverseEndSound" in value:
+                        anim["reverseEndSound"] = value["reverseEndSound"]
+                    if "reverseStartSound" in value:
+                        anim["reverseStartSound"] = value["reverseStartSound"]
+                animation["animations"].append(anim)
+
+                if "extra" in value:
+                    animation["animations"].insert(0, value["extra"])
+                handled = True
+                break
+
+        if handled:
+            animations.append(animation)
+            continue
+
+        # Handle doors
+        if object_name.startswith(("doorF", "doorR", "door", "door_f", "door_r", "door_")):
+            direction = "left" if "l" in object_name[-2:] else "right"
+            axis = [0.0, -60.0, 0.0] if direction == "left" else [0.0, 60.0, 0.0]
+            anim = {
+                "animationType": "rotation",
+                "variable": object_name.lower(),
+                "centerPoint": center_point,
+                "axis": axis,
+                "duration": 15,
+                "forwardsEasing": "easeoutback",
+                "reverseEasing": "easeincubic",
+                "forwardsStartSound": "iv_tpp:dooropen",
+                "reverseEndSound": "iv_tpp:doorclose"
+            }
+            animation["animations"].append(anim)
+
+        # Handle windows
+        elif object_name.startswith("window_"):
+            apply_after = object_name.replace("window_", "")
+            animation.update({"applyAfter": apply_after})
+            animations.append(animation)
+            continue  # Skip default case for windows
+
+        # Default case
+        if not animation["animations"]:
+            animation.update({"applyAfter": object_name})
+
+        animations.append(animation)
+
+    return animations
+
+
 def generate_hitbox_json():
     data = text_entry.get("1.0", tk.END)
     try:
@@ -80,6 +183,16 @@ def generate_part_json():
     data = text_entry.get("1.0", tk.END)
     try:
         json_data = parse_smp_toolbox_data_part(data)
+        json_str = json.dumps(json_data, indent=4)
+        output_text.delete("1.0", tk.END)
+        output_text.insert(tk.END, json_str)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+def generate_animation_json():
+    data = text_entry.get("1.0", tk.END)
+    try:
+        json_data = parse_smp_toolbox_data_animation(data)
         json_str = json.dumps(json_data, indent=4)
         output_text.delete("1.0", tk.END)
         output_text.insert(tk.END, json_str)
@@ -105,6 +218,9 @@ generate_hitbox_button.pack()
 
 generate_part_button = tk.Button(root, text="Generate Part JSON", command=generate_part_json)
 generate_part_button.pack()
+
+generate_animation_button = tk.Button(root, text="Generate Animation JSON", command=generate_animation_json)
+generate_animation_button.pack()
 
 output_text = tk.Text(root, height=10, width=80)
 output_text.pack()
