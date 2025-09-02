@@ -59,16 +59,25 @@ Run the script and provide the path to the image file when prompted.
 
 ---
 
-### 4. `collision_generator.py` (Rename Pending)
-Provides a GUI for generating JSON data for hitboxes and parts based on input from the SMP Toolbox. It allows users to create collision and part definitions for vehicles.
+### 4. `SMP_toolbox_box_converter.py`
+GUI tool that converts SMP Toolbox exports into Immersive Vehicles JSON snippets for hitboxes, parts, and animations.
 
 #### Features
-- Parses SMP Toolbox data to generate hitbox and part JSON objects.
-- Includes a GUI for easy input and output.
-- Allows copying the generated JSON to the clipboard.
+- Hitboxes: groups collisions by variable name, sets standard `collisionTypes`, and applies `applyAfter` automatically.
+- Parts: generates `pos`, `rot`, `maxValue`, and `types` from SMP Toolbox box data.
+- Animations: supports pedals, steering, shifter, hood/boot/tailgate (with durations, easing, and sounds), door left/right hinge logic, window passthrough (`applyAfter`), plus a sensible default when no special rule matches.
+- Simple GUI with buttons to generate each JSON type and a one-click “Copy to Clipboard”.
 
 #### Usage
-Run the script to open the GUI and paste the SMP Toolbox data for processing.
+1. Run the script to open the GUI.
+2. Paste the SMP Toolbox data (pipe-separated lines) into the input box.
+3. Click one of:
+	- “Generate Hitbox JSON”
+	- “Generate Part JSON”
+	- “Generate Animation JSON”
+4. Use “Copy to Clipboard” to copy the output.
+
+Dependencies: requires `pyperclip` (install with `pip install pyperclip`). `tkinter` ships with most Python distributions on Windows.
 
 ---
 
