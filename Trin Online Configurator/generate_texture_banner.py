@@ -110,9 +110,9 @@ def draw_banner_overlay(base_img, trim_name, car_name, banner_date=None):
 # === Example usage ===
 if __name__ == "__main__":
     trim = "Military Spec"
-    car = "Trin ATTG210"
-    img_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-attg210_BASE.png"
-    out_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-attg210_BASE.png"
+    car = "Trin MVAP221"
+    img_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-mvap221_BASE.png"
+    out_path = "E:/Documents Global/Programmation/Trin/Trin Pack Creator/Website/reference/trin_ary-mvap221_BASE.png"
 
     img = Image.open(img_path).convert("RGBA")
     final = draw_banner_overlay(img, trim, car)
