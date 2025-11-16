@@ -2,8 +2,8 @@ import os
 from PIL import Image
 
 # Define input and output folders
-REFERENCE_FOLDER = "E:\\Documents Global\\Programmation\\Trin\\Trin Pack Creator\\Website\\reference"
-OUTPUT_FOLDER = "E:\\Documents Global\\Programmation\\Trin\\Trin Pack Creator\\Website\\output"
+REFERENCE_FOLDER = "..\\Website\\reference"
+OUTPUT_FOLDER = "..\\Website\\output"
 
 # Ensure output folder exists
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
