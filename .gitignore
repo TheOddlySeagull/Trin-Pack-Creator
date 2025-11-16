@@ -3,3 +3,4 @@ output/*
 prompts.md
 Website/output/*
 Website/reference/*
+.vscode/settings.json
