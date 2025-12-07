@@ -86,6 +86,50 @@ Replaces outdated crafting ingredients in vehicle JSON files with new elements i
 
 ---
 
+### 6. `add_bodyroll_visibility.py`
+Adds a visibility animation to bodyroll variable modifiers (`rlBodyroll`, `rrBodyroll`, `flBodyroll`, `frBodyroll`) in vehicle JSONs. The animation makes bodyroll parts visible only when the engine is running.
+
+#### How It Works
+- Scans JSON files under a provided root path.
+- For each `variableModifiers` entry matching the bodyroll variables, appends a `visibility` animation targeting `engine_running_1` when none exists.
+
+#### Usage
+```sh
+python add_bodyroll_visibility.py path/to/assets_root
+```
+
+---
+
+### 7. `add_tow_flatbed.py`
+Adds missing `tow_flatbed` connection entries to vehicle JSONs based on existing `tow_wheel` and `tow_bumper` connections in the `HOOKUP` connection group.
+
+#### Features
+- Derives `pos[1]` (Y) from the first non-heavy `tow_wheel` connection.
+- Derives `pos[2]` (Z) from the maximum among non-heavy `tow_bumper` connections.
+- Skips any heavy variants and files already containing `tow_flatbed`.
+- Supports dry-run, backups, strict error handling, and file limits.
+
+#### Usage
+```sh
+python add_tow_flatbed.py path/to/assets_root --dry-run
+python add_tow_flatbed.py path/to/assets_root --backup-ext .bak
+python add_tow_flatbed.py path/to/assets_root --strict
+```
+
+---
+
+### 8. `validate_json.py`
+Validates JSON files recursively. By default, tolerates common asset-style comments (`//`, `/* */`). Enable strict mode to enforce standard JSON.
+
+#### Usage
+```sh
+python validate_json.py path/to/assets_root
+python validate_json.py path/to/assets_root --no-comments   # strict RFC JSON
+python validate_json.py path/to/assets_root --glob "*.mcmeta" --quiet
+```
+
+---
+
 ## Additional Tools in `Trin Online Configurator`
 The `Trin Online Configurator` folder contains additional tools for texture generation and customization. See its [README](./Trin%20Online%20Configurator/README.md) for more details.
 
